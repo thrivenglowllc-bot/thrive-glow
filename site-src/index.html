@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{name}} · Gut health, hormones and perimenopause care</title>
+<meta name="description" content="{{tagline}}. Find the reason behind bloating, weight gain, poor sleep and hormone shifts, with a plan made for your body. {{service_area}}.">
+<link rel="canonical" href="{{site_url}}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{name}}">
+<meta property="og:description" content="{{tagline}}.">
+<meta property="og:url" content="{{site_url}}/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Petrona:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=1">
+<script type="application/ld+json">{{json_ld}}</script>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="./">{{name}}</a>
+    <nav><a class="hide-sm" href="#how">How it works</a><a class="hide-sm" href="#programs">Programs</a><a href="discovery/">Free call</a></nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <ul class="heard" aria-label="What women often hear">
+        <li>Bloated by mid-afternoon.</li>
+        <li>Awake at 3 a.m.</li>
+        <li>Gaining weight on the same food.</li>
+        <li><span class="dismiss">“It’s just your age.”</span></li>
+      </ul>
+      <div class="answer">
+        <h1>There’s a reason. Let’s find it.</h1>
+        <p class="lede">I help women 30 and up get to the root cause of bloating, weight gain and hormone changes, including perimenopause and menopause, then build a plan that fits your body and your life.</p>
+        <div class="actions">
+          <a class="btn" href="discovery/">Book a free discovery call</a>
+          <a href="#programs">See programs and prices</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-paper" id="who">
+    <div class="wrap split">
+      <h2>Sound familiar?</h2>
+      <div>
+        <ul class="signs">
+          <li>Bloating that builds through the day</li>
+          <li>Constipation, loose stools, or both</li>
+          <li>Weight that won’t move, mostly around the middle</li>
+          <li>Hot flashes or night sweats</li>
+          <li>Periods that changed without warning</li>
+          <li>Waking at night and not getting back to sleep</li>
+          <li>Afternoon crashes and sugar cravings</li>
+          <li>Mood swings or anxiety that feel new</li>
+        </ul>
+        <p style="margin-top:1.5rem">Gut and hormones are tightly linked: digestion affects how your body clears estrogen, and hormone shifts change digestion. Looking at both together is usually where the answers are.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="how">
+    <div class="wrap">
+      <h2>How working together goes</h2>
+      <ol class="steps">
+        <li><h3>Free discovery call</h3><p>Twenty minutes to talk through what’s going on and whether I’m the right fit.</p></li>
+        <li><h3>Look under the hood</h3><p>Your full history, plus functional testing when it will change the plan.</p></li>
+        <li><h3>Your plan</h3><p>Food, supplements, sleep and stress steps in an order you can actually follow.</p></li>
+        <li><h3>Adjust as you go</h3><p>Regular check-ins so the plan changes as your body responds.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="band band-paper" id="programs">
+    <div class="wrap">
+      <h2>Programs</h2>
+      <div class="programs">{{programs}}
+      </div>
+      <p class="fine" style="margin-top:1.25rem">Not sure which fits? Start with the <a href="discovery/">free discovery call</a> and we’ll decide together. Payment is by card through a secure checkout page.</p>
+      <p class="msg err" id="buy-msg" role="alert" hidden></p>
+    </div>
+  </section>
+
+  <section class="band" id="about">
+    <div class="wrap split">
+      <h2>About me</h2>
+      <div>
+        <p class="lede">{{owner_line}}</p>
+        <p>I started {{name}} because so many women are told their symptoms are normal and left to cope. I work with you to find what’s actually driving how you feel, using your history, testing where it helps, and steady support while things change.</p>
+        <p>{{service_area}}. Follow along on Instagram at <a href="{{instagram_url}}">@{{instagram}}</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="cols">
+      <div><a class="brand" href="./">{{name}}</a><p>{{tagline}}.</p></div>
+      <div><p>{{contact_line}}</p></div>
+      <div><p><a href="discovery/">Book a free call</a><br><a href="terms/">Terms and privacy</a></p></div>
+    </div>
+    <p class="disclaimer">{{name}} offers education and wellness support. It is not medical care and does not diagnose, treat or cure disease, and it does not replace your doctor. Please keep working with your healthcare provider, and call 911 in an emergency. © {{year}} {{legal_name}}.</p>
+  </div>
+</footer>
+
+<script src="assets/site-config.js?v=1"></script>
+<script>
+document.querySelectorAll("[data-buy]").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var msg = document.getElementById("buy-msg"), label = b.textContent;
+    msg.hidden = true; b.disabled = true; b.textContent = "Opening checkout…";
+    fetch(SITE.WORKER_BASE + "/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ program: b.getAttribute("data-buy") }) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || "Checkout is not available"); location.href = j.url; }); })
+      .catch(function (e) { msg.textContent = "Checkout didn’t open (" + e.message + "). Email {{email}} and I’ll send you a payment link."; msg.hidden = false; b.disabled = false; b.textContent = label; });
+  });
+});
+</script>
+</body>
+</html>

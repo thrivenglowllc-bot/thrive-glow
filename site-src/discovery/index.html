@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a free discovery call · {{name}}</title>
+<meta name="description" content="Book a free 20-minute discovery call with {{name}} to talk about gut health, hormones or perimenopause and see if we’re a fit.">
+<link rel="canonical" href="{{site_url}}/discovery/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Petrona:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=1">
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="../">{{name}}</a>
+    <nav><a href="../#programs">Programs</a></nav>
+  </div>
+</header>
+
+<main class="prose">
+  <div class="wrap">
+    <h1>Book a free discovery call</h1>
+    <p class="lede">Twenty minutes, no cost, no pressure. Tell me a little about you and I’ll email you within one business day with times that work.</p>
+
+    <p id="booking" hidden><a class="btn" id="booking-link" href="#">Pick a time on my calendar</a></p>
+
+    <div class="notice"><p>Please don’t include medical details here, like diagnoses, medications or test results. We’ll go through your health history on the call and in a secure intake form afterwards.</p></div>
+
+    <form id="f" novalidate>
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="phone">Phone <span class="opt">(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="field"><label for="interest">What are you most interested in? <span class="opt">(optional)</span></label>
+        <select id="interest" name="interest"><option value="">Not sure yet</option>{{program_options}}</select></div>
+      <div class="field"><label for="goal">In a sentence or two, what would you like to feel different? <span class="opt">(optional)</span></label>
+        <textarea id="goal" name="goal" maxlength="600" placeholder="For example: less bloating after meals and more energy in the afternoons"></textarea></div>
+      <div class="field"><label for="heard">How did you find me? <span class="opt">(optional)</span></label>
+        <select id="heard" name="heard"><option value="">Choose one</option><option>Instagram</option><option>A friend or family member</option><option>Google</option><option>My doctor or another practitioner</option><option>Other</option></select></div>
+      <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="field"><label class="check"><input type="checkbox" id="agree" required> <span>I’ve read the <a href="../terms/">terms and privacy notice</a> and understand this is wellness support, not medical care.</span></label></div>
+      <button class="btn" type="submit" id="send">Request my free call</button>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>{{contact_line}}</p>
+    <p class="disclaimer">{{name}} offers education and wellness support. It is not medical care and does not replace your doctor. © {{year}} {{legal_name}}.</p>
+  </div>
+</footer>
+
+<script src="../assets/site-config.js?v=1"></script>
+<script>
+if (SITE.BOOKING_URL) { document.getElementById("booking-link").href = SITE.BOOKING_URL; document.getElementById("booking").hidden = false; }
+var f = document.getElementById("f"), msg = document.getElementById("msg"), btn = document.getElementById("send");
+var pre = new URLSearchParams(location.search).get("program");
+if (pre) { var opt = [].find.call(f.interest.options, function (o) { return o.value.toLowerCase() === pre.toLowerCase(); }); if (opt) opt.selected = true; }
+f.addEventListener("submit", function (e) {
+  e.preventDefault(); msg.className = "msg"; msg.textContent = "";
+  if (!f.name.value.trim()) return fail("Add your name.", f.name);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())) return fail("Add an email address I can reply to.", f.email);
+  if (!document.getElementById("agree").checked) return fail("Tick the box to confirm you’ve read the terms.", document.getElementById("agree"));
+  btn.disabled = true; btn.textContent = "Sending…";
+  var data = {}; new FormData(f).forEach(function (v, k) { data[k] = v; });
+  fetch(SITE.WORKER_BASE + "/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+    .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "Server error " + r.status); }); })
+    .then(function () { location.href = "../thanks/?kind=call"; })
+    .catch(function (err) { btn.disabled = false; btn.textContent = "Request my free call"; fail("That didn’t send (" + err.message + "). Email {{email}} instead and I’ll reply within a day."); });
+});
+function fail(t, el) { msg.className = "msg err"; msg.textContent = t; if (el) el.focus(); }
+</script>
+</body>
+</html>

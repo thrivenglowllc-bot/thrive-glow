@@ -1,0 +1,21 @@
+name = "thrive-glow-worker"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Hourly safety net for payments whose webhook didn't arrive.
+[triggers]
+crons = ["0 * * * *"]
+
+# Fill database_id after `wrangler d1 create thrive-glow` (see README, step "Cloudflare").
+[[d1_databases]]
+binding = "DB"
+database_name = "thrive-glow"
+database_id = "REPLACE_AFTER_D1_CREATE"
+migrations_dir = "migrations"
+
+# Plain settings. Secrets (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY, ADMIN_KEY)
+# are set once in the Cloudflare dashboard, never here.
+[vars]
+SITE_URL = "https://example.github.io/thrive-glow"
+ALLOWED_ORIGINS = "https://example.github.io"
+SUPPORT_EMAIL = "hello@example.com"

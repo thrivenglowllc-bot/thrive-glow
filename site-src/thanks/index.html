@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Thank you · {{name}}</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Petrona:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=1">
+</head>
+<body>
+<header class="site-head"><div class="wrap"><a class="brand" href="../">{{name}}</a></div></header>
+<main class="prose">
+  <div class="wrap">
+    <div id="call">
+      <h1>Got it. Talk soon.</h1>
+      <p class="lede">Your request is in. I’ll email you within one business day with times for your free call. Check your inbox for a confirmation, and your spam folder if you don’t see it.</p>
+    </div>
+    <div id="paid" hidden>
+      <h1 id="paid-title">Confirming your payment…</h1>
+      <p class="lede" id="paid-text">This usually takes a few seconds.</p>
+    </div>
+    <p><a href="../">Back to the home page</a></p>
+  </div>
+</main>
+<script src="../assets/site-config.js?v=1"></script>
+<script>
+var q = new URLSearchParams(location.search), ref = q.get("ref");
+if (q.get("paid") && ref) {
+  document.getElementById("call").hidden = true; document.getElementById("paid").hidden = false;
+  var tries = 0;
+  (function poll() {
+    fetch(SITE.WORKER_BASE + "/order/status?ref=" + encodeURIComponent(ref), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j.status === "paid") { show("You’re in. Thank you.", "Payment received for " + (j.program || "your program") + ". A confirmation is on its way to your email with next steps, including your secure intake form."); return; }
+        if (++tries < 15) setTimeout(poll, 2000);
+        else show("Thank you.", "Your payment is still being confirmed. You’ll get an email as soon as it lands. Questions? Email {{email}}.");
+      })
+      .catch(function () { if (++tries < 15) setTimeout(poll, 2000); });
+  })();
+}
+function show(t, p) { document.getElementById("paid-title").textContent = t; document.getElementById("paid-text").textContent = p; }
+</script>
+</body>
+</html>
