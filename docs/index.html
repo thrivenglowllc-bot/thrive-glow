@@ -14,14 +14,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Petrona:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=1">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"HealthAndBeautyBusiness","name":"Thrive & Glow","description":"1:1 coaching to balance hormones, beat bloat and restore your gut","url":"https://thrivenglow.com","email":"hello@example.com","areaServed":"California","sameAs":["https://www.instagram.com/_thrive_glow/"],"makesOffer":[{"@type":"Offer","name":"12-week coaching program","price":"540.00","priceCurrency":"USD"},{"@type":"Offer","name":"Lab results review","price":"90.00","priceCurrency":"USD"}]}</script>
+<link rel="stylesheet" href="assets/site.css?v=2">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"HealthAndBeautyBusiness","name":"Thrive & Glow","description":"1:1 coaching to balance hormones, beat bloat and restore your gut","url":"https://thrivenglow.com","email":"hello@example.com","areaServed":"California","sameAs":["https://www.instagram.com/_thrive_glow/","https://www.facebook.com/profile.php?id=61579385841082"],"makesOffer":[{"@type":"Offer","name":"12-week coaching program","price":"540.00","priceCurrency":"USD"},{"@type":"Offer","name":"Lab results review","price":"90.00","priceCurrency":"USD"}]}</script>
 </head>
 <body>
 <header class="site-head">
   <div class="wrap">
     <a class="brand" href="./">Thrive &amp; Glow</a>
-    <nav><a class="hide-sm" href="#how">How it works</a><a class="hide-sm" href="#programs">Programs</a><a href="consultation/">Free consultation</a></nav>
+    <nav><a class="hide-sm" href="#programs">Programs</a><a class="hide-sm" href="resources/">Resources</a><a href="consultation/">Free consultation</a></nav>
   </div>
 </header>
 
@@ -83,10 +83,13 @@
       <article class="program" id="program-program">
         <div class="program-head">
           <h3>12-week coaching program</h3>
-          <p class="program-meta">12 weeks, plus a bonus 4th month<span class="price">$540</span></p>
+          <p class="program-meta">12 weeks, plus a bonus 4th month<span class="price">$540 or 3 monthly payments of $180</span></p>
         </div>
         <p>1:1 Zoom sessions every two weeks, weekly check-ins, unlimited email support, at-home functional lab recommendations and a protocol built from your results. Labs and supplements are separate.</p>
-        <button type="button" class="btn btn-quiet" data-buy="program" aria-label="Pay and enroll in 12-week coaching program">Pay and enroll</button>
+        <div class="buy">
+          <button type="button" class="btn btn-quiet" data-buy="program" aria-label="Pay in full and enroll in 12-week coaching program">Pay in full</button>
+          <button type="button" class="btn btn-quiet" data-buy="program" data-plan="1" aria-label="Enroll in 12-week coaching program with 3 monthly payments">Pay monthly</button>
+        </div>
       </article>
       <article class="program" id="program-labs">
         <div class="program-head">
@@ -94,7 +97,9 @@
           <p class="program-meta">One 30-minute session<span class="price">$90</span></p>
         </div>
         <p>Already have functional lab results, or want to start with one test? We go through your results together and you leave with clear next steps. Lab cost is separate.</p>
-        <button type="button" class="btn btn-quiet" data-buy="labs" aria-label="Pay and enroll in Lab results review">Pay and enroll</button>
+        <div class="buy">
+          <button type="button" class="btn btn-quiet" data-buy="labs" aria-label="Pay in full and enroll in Lab results review">Pay and enroll</button>
+        </div>
       </article>
       </div>
       <p class="fine" style="margin-top:1.25rem">Not sure which fits? Start with the <a href="consultation/">free consultation</a> and we’ll decide together. Payment is by card through a secure checkout page.</p>
@@ -119,8 +124,8 @@
   <div class="wrap">
     <div class="cols">
       <div><a class="brand" href="./">Thrive &amp; Glow</a><p>1:1 coaching to balance hormones, beat bloat and restore your gut.</p></div>
-      <div><p><a href="mailto:hello@example.com">hello@example.com</a><br><a href="https://www.instagram.com/_thrive_glow/">@_thrive_glow</a></p></div>
-      <div><p><a href="consultation/">Book a free consultation</a><br><a href="terms/">Terms and privacy</a></p></div>
+      <div><p><a href="mailto:hello@example.com">hello@example.com</a><br><a href="https://www.instagram.com/_thrive_glow/">Instagram @_thrive_glow</a><br><a href="https://www.facebook.com/profile.php?id=61579385841082">Facebook</a></p></div>
+      <div><p><a href="consultation/">Book a free consultation</a><br><a href="resources/">Favorite products</a><br><a href="terms/">Terms and privacy</a></p></div>
     </div>
     <p class="disclaimer">Thrive &amp; Glow offers education and wellness support. It is not medical care and does not diagnose, treat or cure disease, and it does not replace your doctor. Please keep working with your healthcare provider, and call 911 in an emergency. © 2026 Thrive &amp; Glow LLC.</p>
   </div>
@@ -132,7 +137,7 @@ document.querySelectorAll("[data-buy]").forEach(function (b) {
   b.addEventListener("click", function () {
     var msg = document.getElementById("buy-msg"), label = b.textContent;
     msg.hidden = true; b.disabled = true; b.textContent = "Opening checkout…";
-    fetch(SITE.WORKER_BASE + "/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ program: b.getAttribute("data-buy") }) })
+    fetch(SITE.WORKER_BASE + "/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ program: b.getAttribute("data-buy"), plan: b.hasAttribute("data-plan") }) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || "Checkout is not available"); location.href = j.url; }); })
       .catch(function (e) { msg.textContent = "Checkout didn’t open (" + e.message + "). Email hello@example.com and I’ll send you a payment link."; msg.hidden = false; b.disabled = false; b.textContent = label; });
   });

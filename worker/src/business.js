@@ -24,7 +24,11 @@ export const BUSINESS = {
       "name": "12-week coaching program",
       "length": "12 weeks, plus a bonus 4th month",
       "price_cents": 54000,
-      "blurb": "1:1 Zoom sessions every two weeks, weekly check-ins, unlimited email support, at-home functional lab recommendations and a protocol built from your results. Labs and supplements are separate."
+      "blurb": "1:1 Zoom sessions every two weeks, weekly check-ins, unlimited email support, at-home functional lab recommendations and a protocol built from your results. Labs and supplements are separate.",
+      "plan": {
+        "payments": 3,
+        "payment_cents": 18000
+      }
     },
     {
       "key": "labs",
@@ -33,5 +37,6 @@ export const BUSINESS = {
       "price_cents": 9000,
       "blurb": "Already have functional lab results, or want to start with one test? We go through your results together and you leave with clear next steps. Lab cost is separate."
     }
-  ]
+  ],
+  "facebook": "https://www.facebook.com/profile.php?id=61579385841082"
 };

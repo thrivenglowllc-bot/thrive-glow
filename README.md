@@ -2,7 +2,7 @@
 
 - `business.json`: names, contact details and programs. The one file to edit for business facts.
 - `site-src/`: page templates. `node scripts/build.mjs` stamps `business.json` into them and writes `docs/`, which GitHub Pages publishes.
-- `worker/`: Cloudflare Worker. Consultation requests (`/submit`), Stripe Checkout (`/checkout`), Stripe webhook (`/webhooks/stripe`), thanks-page status (`/order/status`), owner page (`/admin`), hourly payment sweep.
+- `worker/`: Cloudflare Worker. Consultation requests (`/submit`), Stripe Checkout (`/checkout`, pay in full or monthly plan that ends itself after the last payment), Stripe webhook (`/webhooks/stripe`), thanks-page status (`/order/status`), owner page (`/admin`), hourly payment sweep.
 - `worker/migrations/`: database changes, applied on deploy. Never edit an applied file; add the next number.
 - `.github/workflows/worker.yml`: on every push, checks the site matches `business.json`, runs the tests, then applies migrations and deploys the worker (once the Cloudflare secrets exist).
 
@@ -13,7 +13,7 @@ Client health information never goes through this site. Intake, history and labs
 | Name | Where | Purpose |
 |---|---|---|
 | `STRIPE_SECRET_KEY` | Cloudflare secret | `sk_test_...` while testing, `sk_live_...` when live |
-| `STRIPE_WEBHOOK_SECRET` | Cloudflare secret | `whsec_...` from the Stripe webhook for `/webhooks/stripe`, events `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `charge.refunded` |
+| `STRIPE_WEBHOOK_SECRET` | Cloudflare secret | `whsec_...` from the Stripe webhook for `/webhooks/stripe`, events `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `invoice.payment_failed`, `charge.refunded` |
 | `RESEND_API_KEY` | Cloudflare secret | Email sending |
 | `ADMIN_KEY` | Cloudflare secret | Password for `/admin` until Cloudflare Access replaces it |
 | `FROM_EMAIL`, `ALERT_TO`, `DEPOSIT_PERCENT` | Cloudflare variable, optional | Sender (must be a mailbox someone reads), alert recipients, deposit |

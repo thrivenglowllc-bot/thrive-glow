@@ -20,10 +20,13 @@ const programs = B.programs.map((p) => `
       <article class="program" id="program-${esc(p.key)}">
         <div class="program-head">
           <h3>${esc(p.name)}</h3>
-          <p class="program-meta">${esc(p.length)}<span class="price">${dollars(p.price_cents)}</span></p>
+          <p class="program-meta">${esc(p.length)}<span class="price">${dollars(p.price_cents)}${p.plan ? ` or ${p.plan.payments} monthly payments of ${dollars(p.plan.payment_cents)}` : ""}</span></p>
         </div>
         <p>${esc(p.blurb)}</p>
-        <button type="button" class="btn btn-quiet" data-buy="${esc(p.key)}" aria-label="Pay and enroll in ${esc(p.name)}">Pay and enroll</button>
+        <div class="buy">
+          <button type="button" class="btn btn-quiet" data-buy="${esc(p.key)}" aria-label="Pay in full and enroll in ${esc(p.name)}">${p.plan ? "Pay in full" : "Pay and enroll"}</button>${p.plan ? `
+          <button type="button" class="btn btn-quiet" data-buy="${esc(p.key)}" data-plan="1" aria-label="Enroll in ${esc(p.name)} with ${p.plan.payments} monthly payments">Pay monthly</button>` : ""}
+        </div>
       </article>`).join("");
 
 const program_options = B.programs.map((p) => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
@@ -37,7 +40,7 @@ const json_ld = JSON.stringify({
   email: B.email,
   ...(B.phone ? { telephone: B.phone } : {}),
   areaServed: B.location,
-  sameAs: B.instagram ? [`https://www.instagram.com/${B.instagram}/`] : [],
+  sameAs: [B.instagram && `https://www.instagram.com/${B.instagram}/`, B.facebook].filter(Boolean),
   makesOffer: B.programs.map((p) => ({ "@type": "Offer", name: p.name, price: (p.price_cents / 100).toFixed(2), priceCurrency: "USD" })),
 }).replace(/</g, "\\u003c");
 
@@ -48,7 +51,7 @@ const tokens = {
   json_ld,
   year: String(new Date().getFullYear()),
   instagram_url: B.instagram ? `https://www.instagram.com/${esc(B.instagram)}/` : "",
-  contact_line: [B.email && `<a href="mailto:${esc(B.email)}">${esc(B.email)}</a>`, B.phone && `<a href="tel:${esc(B.phone)}">${esc(B.phone)}</a>`, B.instagram && `<a href="https://www.instagram.com/${esc(B.instagram)}/">@${esc(B.instagram)}</a>`].filter(Boolean).join("<br>"),
+  contact_line: [B.email && `<a href="mailto:${esc(B.email)}">${esc(B.email)}</a>`, B.phone && `<a href="tel:${esc(B.phone)}">${esc(B.phone)}</a>`, B.instagram && `<a href="https://www.instagram.com/${esc(B.instagram)}/">Instagram @${esc(B.instagram)}</a>`, B.facebook && `<a href="${esc(B.facebook)}">Facebook</a>`].filter(Boolean).join("<br>"),
   owner_line: B.owner_name ? `${esc(B.owner_name)}, ${esc(B.owner_title)}` : esc(B.owner_title),
 };
 

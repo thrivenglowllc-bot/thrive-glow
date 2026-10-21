@@ -19,9 +19,23 @@ CREATE TABLE IF NOT EXISTS orders (
   email TEXT, name TEXT,
   session_id TEXT,                    -- Stripe Checkout session
   payment_intent TEXT,
+  subscription_id TEXT,               -- set for monthly payment plans
+  plan_payments INTEGER DEFAULT 1,    -- 1 = paid in full
   paid_at TEXT, paid_cents INTEGER DEFAULT 0, fee_cents INTEGER DEFAULT 0, refunded_cents INTEGER DEFAULT 0,
   notified_paid_at TEXT
 );
 CREATE INDEX IF NOT EXISTS orders_session ON orders(session_id);
 CREATE INDEX IF NOT EXISTS orders_payment_intent ON orders(payment_intent);
 
+CREATE INDEX IF NOT EXISTS orders_subscription ON orders(subscription_id);
+
+-- One row per paid monthly installment (Stripe invoice), so retries never double-count.
+CREATE TABLE IF NOT EXISTS installments (
+  invoice_id TEXT PRIMARY KEY,
+  ref TEXT NOT NULL,
+  amount_cents INTEGER NOT NULL,
+  fee_cents INTEGER DEFAULT 0,
+  refunded_cents INTEGER DEFAULT 0,
+  payment_intent TEXT,
+  paid_at TEXT NOT NULL
+);

@@ -207,6 +207,100 @@ test("hourly sweep catches a paid order with no webhook", async () => {
   assert.equal(env.DB.raw.prepare("SELECT status FROM orders WHERE ref = ?").get(ref).status, "paid");
 });
 
+const PLANNED = BUSINESS.programs.find((p) => p.plan);
+
+async function startPlan(env) {
+  const calls = mockFetch([stripeSession("cs_plan")]);
+  const r = await call(env, "/checkout", { method: "POST", body: { program: PLANNED.key, plan: true } });
+  return { ref: r.json.ref, sent: calls.find((c) => c.url.endsWith("/v1/checkout/sessions")).body };
+}
+const planSession = (ref) => ({ id: "cs_plan", mode: "subscription", client_reference_id: ref, payment_status: "paid", amount_total: PLANNED.plan.payment_cents, subscription: "sub_1", invoice: "in_1", customer_details: { email: "maya@example.com", name: "Maya Lopez" }, created: 1792000000 });
+const invoice = (id, n, ref) => ({ id, subscription: "sub_1", amount_paid: PLANNED.plan.payment_cents, payment_intent: "pi_" + id, subscription_details: { metadata: { ref } }, status_transitions: { paid_at: 1792000000 + n * 2600000 } });
+const planRoutes = (cancels) => [["/v1/subscriptions/sub_1", (url, body) => { cancels.push(body); return { body: {} }; }], ["/v1/payment_intents/", () => ({ body: { latest_charge: { balance_transaction: { fee: 552 } } } })]];
+
+test("plan checkout: monthly subscription at the installment price, order total is the full plan", async () => {
+  const env = makeEnv();
+  const { ref, sent } = await startPlan(env);
+  assert.equal(sent.mode, "subscription");
+  assert.equal(AMOUNT(sent), PLANNED.plan.payment_cents);
+  assert.equal(sent["line_items[0][price_data][recurring][interval]"], "month");
+  assert.equal(sent["subscription_data[metadata][ref]"], ref);
+  assert.equal(sent.payment_intent_data, undefined);
+  const o = env.DB.raw.prepare("SELECT * FROM orders WHERE ref = ?").get(ref);
+  assert.equal(o.amount_cents, PLANNED.plan.payments * PLANNED.plan.payment_cents);
+  assert.equal(o.plan_payments, PLANNED.plan.payments);
+});
+
+test("plan checkout: plan flag on a program without a plan charges in full", async () => {
+  const other = BUSINESS.programs.find((p) => !p.plan);
+  const calls = mockFetch([stripeSession()]);
+  await call(makeEnv(), "/checkout", { method: "POST", body: { program: other.key, plan: true } });
+  const sent = calls.find((c) => c.url.endsWith("/v1/checkout/sessions")).body;
+  assert.equal(sent.mode, "payment");
+  assert.equal(AMOUNT(sent), other.price_cents);
+});
+
+test("plan: three payments recorded once each, then the subscription is set to end", async () => {
+  const env = makeEnv();
+  const { ref } = await startPlan(env);
+  const cancels = [];
+  const calls = mockFetch(planRoutes(cancels));
+  await signedWebhook(env, { type: "checkout.session.completed", data: { object: planSession(ref) } });
+  await signedWebhook(env, { type: "invoice.paid", data: { object: invoice("in_1", 0, ref) } }); // same first payment, must not double-count
+  let o = env.DB.raw.prepare("SELECT * FROM orders WHERE ref = ?").get(ref);
+  assert.equal(o.status, "paid");
+  assert.equal(o.paid_cents, PLANNED.plan.payment_cents);
+  assert.equal(cancels.length, 0);
+  assert.match(emails(calls)[0].text, /payment 1 of 3/);
+  await signedWebhook(env, { type: "invoice.paid", data: { object: invoice("in_2", 1, ref) } });
+  await signedWebhook(env, { type: "invoice.paid", data: { object: invoice("in_2", 1, ref) } }); // retry
+  assert.equal(cancels.length, 0);
+  await signedWebhook(env, { type: "invoice.paid", data: { object: invoice("in_3", 2, ref) } });
+  o = env.DB.raw.prepare("SELECT * FROM orders WHERE ref = ?").get(ref);
+  assert.equal(o.paid_cents, 3 * PLANNED.plan.payment_cents);
+  assert.equal(env.DB.raw.prepare("SELECT COUNT(*) n FROM installments WHERE ref = ?").get(ref).n, 3);
+  assert.equal(cancels.length, 1);
+  assert.equal(cancels[0].cancel_at_period_end, "true");
+  const alerts = emails(calls).filter((e) => /Payment \d of 3/.test(e.text));
+  assert.equal(alerts.length, 2);
+  assert.match(alerts[1].text, /Plan complete/);
+  assert.equal(emails(calls).filter((e) => e.to[0] === "maya@example.com").length, 1);
+});
+
+test("plan: first invoice arriving before checkout completion still settles the order once", async () => {
+  const env = makeEnv();
+  const { ref } = await startPlan(env);
+  const calls = mockFetch(planRoutes([]));
+  await signedWebhook(env, { type: "invoice.paid", data: { object: { ...invoice("in_1", 0, ref), customer_email: "maya@example.com" } } });
+  await signedWebhook(env, { type: "checkout.session.completed", data: { object: planSession(ref) } });
+  const o = env.DB.raw.prepare("SELECT * FROM orders WHERE ref = ?").get(ref);
+  assert.equal(o.status, "paid");
+  assert.equal(o.subscription_id, "sub_1");
+  assert.equal(o.paid_cents, PLANNED.plan.payment_cents);
+  assert.equal(emails(calls).filter((e) => e.to[0] === "maya@example.com").length, 1);
+});
+
+test("plan: a failed monthly payment alerts the owner", async () => {
+  const env = makeEnv();
+  const { ref } = await startPlan(env);
+  const calls = mockFetch(planRoutes([]));
+  await signedWebhook(env, { type: "checkout.session.completed", data: { object: planSession(ref) } });
+  await signedWebhook(env, { type: "invoice.payment_failed", data: { object: invoice("in_2", 1, ref) } });
+  assert.ok(emails(calls).some((e) => /monthly payment failed/.test(e.text)));
+});
+
+test("plan: refunding one installment lowers what was paid", async () => {
+  const env = makeEnv();
+  const { ref } = await startPlan(env);
+  mockFetch(planRoutes([]));
+  await signedWebhook(env, { type: "checkout.session.completed", data: { object: planSession(ref) } });
+  await signedWebhook(env, { type: "invoice.paid", data: { object: invoice("in_2", 1, ref) } });
+  await signedWebhook(env, { type: "charge.refunded", data: { object: { payment_intent: "pi_in_2", amount_refunded: PLANNED.plan.payment_cents } } });
+  const o = env.DB.raw.prepare("SELECT * FROM orders WHERE ref = ?").get(ref);
+  assert.equal(o.refunded_cents, PLANNED.plan.payment_cents);
+  assert.equal(o.fee_cents, 552);
+});
+
 test("admin page needs the password and then lists requests", async () => {
   const env = makeEnv();
   mockFetch();
