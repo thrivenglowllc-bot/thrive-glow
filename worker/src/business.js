@@ -2,43 +2,36 @@
 export const BUSINESS = {
   "_note": "The one place for names, contact details and programs. Run `node scripts/build.mjs` after editing; it stamps these into every page and into the worker.",
   "name": "Thrive & Glow",
-  "legal_name": "Thrive & Glow",
-  "entity_type": "Sole proprietorship",
-  "owner_name": "",
-  "owner_title": "Integrative Health Practitioner (IHP 2)",
-  "tagline": "1:1 coaching for gut health, hormones and perimenopause",
+  "legal_name": "Thrive & Glow LLC",
+  "entity_type": "LLC",
+  "owner_name": "Theresa",
+  "owner_title": "Health Coach and Integrative Health Practitioner (IHP 2)",
+  "tagline": "1:1 coaching to balance hormones, beat bloat and restore your gut",
   "email": "hello@example.com",
   "phone": "",
   "instagram": "_thrive_glow",
   "location": "California",
-  "service_area": "Virtual sessions across California",
+  "service_area": "Virtual coaching by Zoom",
   "time_zone": "America/Los_Angeles",
-  "site_url": "https://example.github.io/thrive-glow",
+  "site_url": "https://thrivenglow.com",
   "worker_url": "https://thrive-glow-worker.example.workers.dev",
   "booking_url": "",
   "deposit_percent": 100,
   "tax_rate": 0,
   "programs": [
     {
-      "key": "single",
-      "name": "Single coaching session",
-      "length": "One 75-minute session",
-      "price_cents": 25000,
-      "blurb": "A deep look at your history and symptoms, with a written next-steps plan you can start the same week."
+      "key": "program",
+      "name": "12-week coaching program",
+      "length": "12 weeks, plus a bonus 4th month",
+      "price_cents": 54000,
+      "blurb": "1:1 Zoom sessions every two weeks, weekly check-ins, unlimited email support, at-home functional lab recommendations and a protocol built from your results. Labs and supplements are separate."
     },
     {
-      "key": "gut",
-      "name": "Gut health coaching",
-      "length": "12 weeks, 1:1",
-      "price_cents": 150000,
-      "blurb": "For bloating, irregularity and food reactions. Functional testing where it helps, a personal protocol, and check-ins every two weeks."
-    },
-    {
-      "key": "hormone",
-      "name": "Hormone and perimenopause coaching",
-      "length": "16 weeks, 1:1",
-      "price_cents": 220000,
-      "blurb": "For sleep, weight, mood and cycle changes in your 40s and beyond. Gut and hormone work together, adjusted as your body responds."
+      "key": "labs",
+      "name": "Lab results review",
+      "length": "One 30-minute session",
+      "price_cents": 9000,
+      "blurb": "Already have functional lab results, or want to start with one test? We go through your results together and you leave with clear next steps. Lab cost is separate."
     }
   ]
 };
