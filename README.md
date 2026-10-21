@@ -2,6 +2,7 @@
 
 - `business.json`: names, contact details and programs. The one file to edit for business facts.
 - `site-src/`: page templates. `node scripts/build.mjs` stamps `business.json` into them and writes `docs/`, which GitHub Pages publishes.
+- `site-src/blog/`: 31 posts imported from the old GoDaddy blog on October 21, 2026, at their original addresses (/blog/f/<slug>/).
 - `worker/`: Cloudflare Worker. Consultation requests (`/submit`), Stripe Checkout (`/checkout`, pay in full or monthly plan that ends itself after the last payment), Stripe webhook (`/webhooks/stripe`), thanks-page status (`/order/status`), owner page (`/admin`), hourly payment sweep.
 - `worker/migrations/`: database changes, applied on deploy. Never edit an applied file; add the next number.
 - `.github/workflows/worker.yml`: on every push, checks the site matches `business.json`, runs the tests, then applies migrations and deploys the worker (once the Cloudflare secrets exist).

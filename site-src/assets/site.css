@@ -155,3 +155,5 @@ textarea { min-height: 7rem; resize: vertical; }
 .post-cta { max-width: 40rem; margin: 3rem 0 2rem; padding: 1.75rem; background: var(--paper); border-left: 4px solid var(--beet); }
 .post-cta h2 { font-size: 1.5rem; margin-bottom: .5rem; }
 .post-nav p { margin: .4rem 0; }
+.post-body hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+.post-list div > p:last-child { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
