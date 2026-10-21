@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>{{site_url}}/</loc></url>
   <url><loc>{{site_url}}/consultation/</loc></url>
+  <url><loc>{{site_url}}/blog/</loc></url>
   <url><loc>{{site_url}}/resources/</loc></url>
   <url><loc>{{site_url}}/terms/</loc></url>
 </urlset>

@@ -16,6 +16,6 @@ migrations_dir = "migrations"
 # Plain settings. Secrets (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY, ADMIN_KEY)
 # are set once in the Cloudflare dashboard, never here.
 [vars]
-SITE_URL = "https://example.github.io/thrive-glow"
-ALLOWED_ORIGINS = "https://example.github.io"
-SUPPORT_EMAIL = "hello@example.com"
+SITE_URL = "https://thrivenglow.com"
+ALLOWED_ORIGINS = "https://thrivenglow.com,https://www.thrivenglow.com,https://thrivenglowllc-bot.github.io"
+SUPPORT_EMAIL = "hello@thrivenglow.com"

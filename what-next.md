@@ -9,7 +9,7 @@ Updated October 21, 2026.
 ## Waiting on Theresa
 1. Create the empty `thrive-glow` repository on GitHub.
 2. Allow thrivenglow.com and img1.wsimg.com in Claude's network settings so the 31 blog posts can be copied over.
-3. The email address clients should use.
+
 4. Move the symptom questions in the Google booking form into EquiLife (or another secure intake tool).
 
 ## Coming next

@@ -133,3 +133,25 @@ textarea { min-height: 7rem; resize: vertical; }
 .site-foot p { font-size: .95rem; }
 .site-foot .disclaimer { font-size: .85rem; color: #b9c6c0; border-top: 1px solid rgba(255,255,255,.15); padding-top: 1.25rem; margin-top: 2rem; max-width: 52rem; }
 .program > .btn { justify-self: start; }
+
+/* blog */
+.post-list { list-style: none; padding: 0; margin: 2rem 0 0; border-top: 2px solid var(--ferment); }
+.post-list li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; padding: 1.4rem 0; border-bottom: 1px solid var(--line); align-items: start; }
+@media (min-width: 700px) { .post-list li { grid-template-columns: 11rem 1fr; gap: 1.75rem; } }
+.post-list img, .post-list .noimg { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: .5rem; background: var(--line); }
+.post-list h2 { font-size: 1.3rem; margin: .1rem 0 .4rem; max-width: none; }
+.post-list h2 a { color: var(--ferment); text-decoration: none; }
+.post-list h2 a:hover { color: var(--beet); }
+.post-list p { margin: 0; }
+.post-list .fine { margin: 0; }
+.post article { max-width: 40rem; }
+.post-body { font-size: 1.1rem; line-height: 1.7; }
+.post-body p, .post-body li { max-width: none; }
+.post-body h2 { font-size: 1.6rem; margin: 2.2rem 0 .8rem; }
+.post-body h3 { font-size: 1.3rem; margin: 1.8rem 0 .6rem; }
+.post-body figure { margin: 1.5rem 0; }
+.post-body img { display: block; width: 100%; max-height: 34rem; object-fit: contain; border-radius: .5rem; background: var(--paper); }
+.post-body blockquote { margin: 1.5rem 0; padding-left: 1rem; border-left: 4px solid var(--turmeric); font-style: italic; }
+.post-cta { max-width: 40rem; margin: 3rem 0 2rem; padding: 1.75rem; background: var(--paper); border-left: 4px solid var(--beet); }
+.post-cta h2 { font-size: 1.5rem; margin-bottom: .5rem; }
+.post-nav p { margin: .4rem 0; }

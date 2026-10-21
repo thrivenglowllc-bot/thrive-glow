@@ -7,7 +7,7 @@ export const BUSINESS = {
   "owner_name": "Theresa",
   "owner_title": "Health Coach and Integrative Health Practitioner (IHP 2)",
   "tagline": "1:1 coaching to balance hormones, beat bloat and restore your gut",
-  "email": "hello@example.com",
+  "email": "hello@thrivenglow.com",
   "phone": "",
   "instagram": "_thrive_glow",
   "location": "California",
