@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Book a free discovery call · {{name}}</title>
-<meta name="description" content="Book a free 20-minute discovery call with {{name}} to talk about gut health, hormones or perimenopause and see if we’re a fit.">
-<link rel="canonical" href="{{site_url}}/discovery/">
+<title>Book a free consultation · {{name}}</title>
+<meta name="description" content="Book a free consultation with {{name}} to talk about gut health, hormones or perimenopause and see if we’re a fit.">
+<link rel="canonical" href="{{site_url}}/consultation/">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,12 +22,12 @@
 
 <main class="prose">
   <div class="wrap">
-    <h1>Book a free discovery call</h1>
-    <p class="lede">Twenty minutes, no cost, no pressure. Tell me a little about you and I’ll email you within one business day with times that work.</p>
+    <h1>Book a free consultation</h1>
+    <p class="lede">Free, no pressure. Tell me a little about you and I’ll email you within one business day with times that work.</p>
 
     <p id="booking" hidden><a class="btn" id="booking-link" href="#">Pick a time on my calendar</a></p>
 
-    <div class="notice"><p>Please don’t include medical details here, like diagnoses, medications or test results. We’ll go through your health history on the call and in a secure intake form afterwards.</p></div>
+    <div class="notice"><p>Please don’t include medical details here, like diagnoses, medications or test results. We’ll go through your health history together and in a secure intake form afterwards.</p></div>
 
     <form id="f" novalidate>
       <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
@@ -41,7 +41,7 @@
         <select id="heard" name="heard"><option value="">Choose one</option><option>Instagram</option><option>A friend or family member</option><option>Google</option><option>My doctor or another practitioner</option><option>Other</option></select></div>
       <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="field"><label class="check"><input type="checkbox" id="agree" required> <span>I’ve read the <a href="../terms/">terms and privacy notice</a> and understand this is wellness support, not medical care.</span></label></div>
-      <button class="btn" type="submit" id="send">Request my free call</button>
+      <button class="btn" type="submit" id="send">Request my free consultation</button>
       <p class="msg" id="msg" role="status"></p>
     </form>
   </div>
@@ -70,7 +70,7 @@ f.addEventListener("submit", function (e) {
   fetch(SITE.WORKER_BASE + "/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
     .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "Server error " + r.status); }); })
     .then(function () { location.href = "../thanks/?kind=call"; })
-    .catch(function (err) { btn.disabled = false; btn.textContent = "Request my free call"; fail("That didn’t send (" + err.message + "). Email {{email}} instead and I’ll reply within a day."); });
+    .catch(function (err) { btn.disabled = false; btn.textContent = "Request my free consultation"; fail("That didn’t send (" + err.message + "). Email {{email}} instead and I’ll reply within a day."); });
 });
 function fail(t, el) { msg.className = "msg err"; msg.textContent = t; if (el) el.focus(); }
 </script>

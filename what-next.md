@@ -3,7 +3,7 @@
 Updated October 21, 2026.
 
 ## Done
-- Website draft: home, programs, free discovery-call form (no health details collected), terms and privacy, thanks page, SEO basics.
+- Website draft: home, programs, free consultation form (no health details collected), terms and privacy, thanks page, SEO basics.
 - Back end: call requests email you and the client, Stripe checkout for programs, paid confirmations, owner page, hourly payment safety net. 22 automated tests passing.
 
 ## Waiting on you

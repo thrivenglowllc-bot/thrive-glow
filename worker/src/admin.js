@@ -1,4 +1,4 @@
-// Owner page at /admin: recent call requests and payments, readable on a phone.
+// Owner page at /admin: recent consultation requests and payments, readable on a phone.
 import { BUSINESS } from "./business.js";
 import { dollars } from "./core.js";
 
@@ -16,8 +16,8 @@ export async function adminPage(env) {
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.75rem}.tile{background:#fff;border-radius:.5rem;padding:.8rem}.tile b{display:block;font-size:1.5rem}
 .row{background:#fff;border-radius:.5rem;padding:.75rem .9rem;margin:.5rem 0}.row small{color:#4a5e5b}</style></head><body><main>
 <h1>${esc(BUSINESS.name)}: this month</h1>
-<div class="tiles"><div class="tile">Programs sold<b>${m.n}</b></div><div class="tile">Revenue after refunds<b>${dollars(m.net)}</b></div><div class="tile">Card fees<b>${dollars(m.fees)}</b></div><div class="tile">Call requests<b>${calls.n}</b></div></div>
-<h2>Call requests</h2>${inq.length ? inq.map((r) => `<div class="row"><b>${esc(r.name)}</b> <small>${day(r.created_at)}${r.emailed === 3 ? "" : " · email problem"}</small><br><a href="mailto:${esc(r.email)}">${esc(r.email)}</a>${r.phone ? " · " + esc(r.phone) : ""}<br><small>${esc(r.interest || "Not sure yet")}${r.heard ? " · found you via " + esc(r.heard) : ""}</small>${r.goal ? `<br>${esc(r.goal)}` : ""}</div>`).join("") : "<p>No requests yet. They appear here as soon as someone fills in the free-call form.</p>"}
+<div class="tiles"><div class="tile">Programs sold<b>${m.n}</b></div><div class="tile">Revenue after refunds<b>${dollars(m.net)}</b></div><div class="tile">Card fees<b>${dollars(m.fees)}</b></div><div class="tile">Consultation requests<b>${calls.n}</b></div></div>
+<h2>Consultation requests</h2>${inq.length ? inq.map((r) => `<div class="row"><b>${esc(r.name)}</b> <small>${day(r.created_at)}${r.emailed === 3 ? "" : " · email problem"}</small><br><a href="mailto:${esc(r.email)}">${esc(r.email)}</a>${r.phone ? " · " + esc(r.phone) : ""}<br><small>${esc(r.interest || "Not sure yet")}${r.heard ? " · found you via " + esc(r.heard) : ""}</small>${r.goal ? `<br>${esc(r.goal)}` : ""}</div>`).join("") : "<p>No requests yet. They appear here as soon as someone fills in the free consultation form.</p>"}
 <h2>Payments</h2>${ord.length ? ord.map((o) => `<div class="row"><b>${dollars(o.paid_cents)}</b> ${esc(o.program_name)} <small>${day(o.paid_at)} · ${esc(o.ref)}${o.status === "refunded" ? " · refunded" : ""}</small><br>${esc(o.name || "")} ${o.email ? `<a href="mailto:${esc(o.email)}">${esc(o.email)}</a>` : ""}</div>`).join("") : "<p>No payments yet.</p>"}
 </main></body></html>`;
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" } });

@@ -1,4 +1,4 @@
-// Discovery-call requests from /discovery/. Stores the request, emails the owner (reply-to = the client)
+// Consultation requests from /consultation/. Stores the request, emails the owner (reply-to = the client)
 // and the client (reply-to = the owner's real inbox). Collects no health information by design.
 import { json, rateLimited, isEmail } from "./core.js";
 import { sendEmail, sendAlert, signature } from "./notify.js";
@@ -27,14 +27,14 @@ export async function submitInquiry(request, env, cors) {
     .bind(new Date().toISOString(), name, email, phone, interest, goal, heard).run();
   const id = ins.meta && ins.meta.last_row_id;
 
-  const toOwner = `New discovery-call request via your website\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nInterested in: ${interest || "Not sure yet"}\nHow they found you: ${heard || "-"}\n\nWhat they'd like to feel different:\n${goal || "-"}\n\nReply to this email to answer ${name.split(" ")[0]} directly with times for the call.`;
-  const r1 = await sendEmail(env, { to: env.SUPPORT_EMAIL || BUSINESS.email, replyTo: email, subject: `Discovery call request: ${name}`, text: toOwner });
+  const toOwner = `New consultation request via your website\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "-"}\nInterested in: ${interest || "Not sure yet"}\nHow they found you: ${heard || "-"}\n\nWhat they'd like to feel different:\n${goal || "-"}\n\nReply to this email to answer ${name.split(" ")[0]} directly with times for the consultation.`;
+  const r1 = await sendEmail(env, { to: env.SUPPORT_EMAIL || BUSINESS.email, replyTo: email, subject: `Consultation request: ${name}`, text: toOwner });
 
   const first = name.split(" ")[0];
-  const toClient = `Hi ${first},\n\nThanks for reaching out to ${BUSINESS.name}. I've got your request for a free discovery call and will email you within one business day with a few times to choose from.\n\n${BUSINESS.booking_url ? "If you'd rather pick a time now, you can book here: " + BUSINESS.booking_url + "\n\n" : ""}Please don't send medical details by email. We'll go through your health history on the call and in a secure intake form.\n\nTalk soon,\n${signature(env)}`;
-  const r2 = await sendEmail(env, { to: email, subject: "Your free discovery call request", text: toClient });
+  const toClient = `Hi ${first},\n\nThanks for reaching out to ${BUSINESS.name}. I've got your request for a free consultation and will email you within one business day with a few times to choose from.\n\n${BUSINESS.booking_url ? "If you'd rather pick a time now, you can book here: " + BUSINESS.booking_url + "\n\n" : ""}Please don't send medical details by email. We'll go through your health history during our consultation and in a secure intake form.\n\nTalk soon,\n${signature(env)}`;
+  const r2 = await sendEmail(env, { to: email, subject: "Your free consultation request", text: toClient });
 
   await env.DB.prepare(`UPDATE inquiries SET emailed = ? WHERE id = ?`).bind((r1.ok ? 1 : 0) + (r2.ok ? 2 : 0), id).run();
-  if (!r1.ok) { console.error("email to owner failed", r1.error); await sendAlert(env, `Call request from ${name} saved, but the email to you failed: ${r1.error}`); }
+  if (!r1.ok) { console.error("email to owner failed", r1.error); await sendAlert(env, `Consultation request from ${name} saved, but the email to you failed: ${r1.error}`); }
   return json({ ok: r1.ok, emailed_client: r2.ok, error: r1.ok ? undefined : "We saved your request but couldn't send the email" }, r1.ok ? 200 : 502, cors);
 }

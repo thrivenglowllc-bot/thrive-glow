@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>{{site_url}}/</loc></url>
-  <url><loc>{{site_url}}/discovery/</loc></url>
+  <url><loc>{{site_url}}/consultation/</loc></url>
   <url><loc>{{site_url}}/terms/</loc></url>
 </urlset>
